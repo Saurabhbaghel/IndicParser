@@ -5,9 +5,9 @@ setuptools.setup(
 	version = '0.1',
 	url = 'https://github.com/Saurabhbaghel/indicparser',
 	packages = ['indicparser'],
-	package_data = {
-		'configs':['*.yaml'],
-		},
+# 	package_data = {
+# 		'configs':['*.yaml'],
+# 		},
 	install_requires = [
 		'numpy',
 		'opencv-python',
