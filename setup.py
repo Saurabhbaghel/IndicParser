@@ -20,5 +20,5 @@ setuptools.setup(
 		'pdfreader',
 		'layoutparser[ocr]'
 		],
-	dependency_links = [
+# 	dependency_links = [
 )
