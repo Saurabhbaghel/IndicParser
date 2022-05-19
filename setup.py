@@ -13,7 +13,7 @@ setuptools.setup(
 		'https://download.pytorch.org/whl/cu101/torch_stable.html',
 # 		'detectron2==0.1.3 -f' 
 		'https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.5/index.html'
-		]
+		],
 		
 	
 		
@@ -28,6 +28,6 @@ setuptools.setup(
 		'pdf2image',
 		'pdfreader',
 		'layoutparser[ocr]'
-		],
+		]
 	
 )
