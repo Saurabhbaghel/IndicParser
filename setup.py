@@ -5,9 +5,9 @@ setup(
 	version = '0.1',
 	url = 'https://github.com/Saurabhbaghel/indicparser',
 	packages = ['indicparser'],
-# 	package_data = {
-# 		'configs':['*.yaml'],
-# 		},
+	package_data = {
+		'indicparser':['configs/*.yaml'],
+		},
 
 		
 	
