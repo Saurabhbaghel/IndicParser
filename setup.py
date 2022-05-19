@@ -21,8 +21,10 @@ setuptools.setup(
 		'layoutparser[ocr]'
 		],
 	dependency_links = [ 
-		'torchvision==0.6 -f https://download.pytorch.org/whl/cu101/torch_stable.html',
-		'detectron2==0.1.3 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.5/index.html'
+# 		'torchvision==0.6 -f '
+		'https://download.pytorch.org/whl/cu101/torch_stable.html',
+# 		'detectron2==0.1.3 -f' 
+		'https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.5/index.html'
 		]
 		
 )
