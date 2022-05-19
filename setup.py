@@ -6,7 +6,8 @@ setup(
 	url = 'https://github.com/Saurabhbaghel/indicparser',
 	packages = ['indicparser'],
 	package_data = {
-		'indicparser':['configs/*.yaml'],
+		'indicparser':['config/*.yaml','config/*.yml'],
+		
 		},
 
 		
