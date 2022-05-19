@@ -18,7 +18,7 @@ setup(
 # 		},
 	dependency_links = [ 
 # 		'torchvision==0.6 -f '
-		'https://download.pytorch.org/whl/cu101/torch_stable.html',
+# 		'https://download.pytorch.org/whl/cu101/torch_stable.html',
 # 		'detectron2==0.1.3 -f' 
 		'https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.5/detectron2-0.1.3%2Bcu101-cp38-cp38-linux_x86_64.whl'
 		],
