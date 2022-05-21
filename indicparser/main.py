@@ -1,3 +1,9 @@
+import sys
+try:
+ import detectron2
+except:
+ print('Please install detectron2, pytorch and torchvision')
+ sys.exit(1)
 
 import layoutparser as lp
 import pandas as pd
@@ -11,7 +17,7 @@ except ImportError:
  import Image
 import pytesseract
 from pdf2image import convert_from_path
-import sys
+# import sys
 from pdfreader import SimplePDFViewer
 import subprocess
 import json
