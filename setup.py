@@ -12,7 +12,7 @@ setup(
 	
 	
 	entry_points = {
-		'console-scripts': [get_CUDA=indicparser.main:get_CUDA]
+		'console-scripts': ['get_CUDA=indicparser.main:get_CUDA']
 	},
 	
 	install_requires = [
