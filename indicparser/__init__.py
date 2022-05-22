@@ -1,6 +1,7 @@
 
 import subprocess
 import sys
+import re
 
 def get_CUDA():
  command='''if nvcc --version 2&> /dev/null; then
