@@ -40,5 +40,5 @@ fi;'''
 
 
  except:
-  print(f'Please install pytorch version for CUDA version {CUDA_VERSION}. Please install torchvision combatible with the torch version. Also install Detectron2')
+  raise Exception(f'Please install pytorch version for CUDA version {CUDA_VERSION}. Please install torchvision combatible with the torch version. Also install Detectron2')
   sys.exit(1)
