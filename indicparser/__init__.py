@@ -3,7 +3,7 @@ import subprocess
 import sys
 from re import findall
 
-def get_CUDA():
+def check_compatibility():
  command='''if nvcc --version 2&> /dev/null; then
     # Determine CUDA version using default nvcc binary
     CUDA_VERSION=$(nvcc --version | sed -n 's/^.*release \([0-9]\+\.[0-9]\+\).*$/\1/p');
