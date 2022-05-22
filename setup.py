@@ -13,7 +13,7 @@ setup(
 	
 	entry_points = {
 		'console-scripts': [get_CUDA=indicparser:get_CUDA]
-	}
+	},
 	
 	install_requires = [
 		'numpy',
