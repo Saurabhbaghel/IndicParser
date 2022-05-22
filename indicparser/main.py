@@ -1,49 +1,52 @@
-# import subprocess
-# import sys
 
-# def get_CUDA():
-#  command='''if nvcc --version 2&> /dev/null; then
-#     # Determine CUDA version using default nvcc binary
-#     CUDA_VERSION=$(nvcc --version | sed -n 's/^.*release \([0-9]\+\.[0-9]\+\).*$/\1/p');
+import subprocess
+import sys
 
-# elif /usr/local/cuda/bin/nvcc --version 2&> /dev/null; then
-#     # Determine CUDA version using /usr/local/cuda/bin/nvcc binary
-#     CUDA_VERSION=$(/usr/local/cuda/bin/nvcc --version | sed -n 's/^.*release \([0-9]\+\.[0-9]\+\).*$/\1/p');
+def get_CUDA():
+ command='''if nvcc --version 2&> /dev/null; then
+    # Determine CUDA version using default nvcc binary
+    CUDA_VERSION=$(nvcc --version | sed -n 's/^.*release \([0-9]\+\.[0-9]\+\).*$/\1/p');
 
-# elif [ -f "/usr/local/cuda/version.txt" ]; then
-#     # Determine CUDA version using /usr/local/cuda/version.txt file
-#     CUDA_VERSION=$(cat /usr/local/cuda/version.txt | sed 's/.* \([0-9]\+\.[0-9]\+\).*/\1/');
+elif /usr/local/cuda/bin/nvcc --version 2&> /dev/null; then
+    # Determine CUDA version using /usr/local/cuda/bin/nvcc binary
+    CUDA_VERSION=$(/usr/local/cuda/bin/nvcc --version | sed -n 's/^.*release \([0-9]\+\.[0-9]\+\).*$/\1/p');
 
-# else
-#     CUDA_VERSION="";
+elif [ -f "/usr/local/cuda/version.txt" ]; then
+    # Determine CUDA version using /usr/local/cuda/version.txt file
+    CUDA_VERSION=$(cat /usr/local/cuda/version.txt | sed 's/.* \([0-9]\+\.[0-9]\+\).*/\1/');
 
-# fi;'''
-#  res=subprocess.run(args=command,shell=True,universal_newlines=True,capture_output=True)
-#  pattern = 'release \d+.\d+'
-#  CUDA_VERSION = re.findall(pattern,res.stdout)[0].split()[1]
- 
- 
-#  try:
-#   import detectron2
-#   from detectron2.utils.logger import setup_logger
-#   setup_logger()
-#   import argparse
-#   from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, hooks, launch
-#   from detectron2 import model_zoo
-#   from detectron2.engine import DefaultPredictor
-#   from detectron2.config import get_cfg
-#   from detectron2.utils.visualizer import Visualizer
-#   from detectron2.data import MetadataCatalog, DatasetCatalog
-#   from detectron2.utils.visualizer import ColorMode
+else
+    CUDA_VERSION="";
 
-#   from detectron2.structures import BoxMode
-#   from detectron2.data.datasets import register_coco_instances
+fi;'''
+ res=subprocess.run(args=command,shell=True,universal_newlines=True,capture_output=True)
+ pattern = 'release \d+.\d+'
+ CUDA_VERSION = re.findall(pattern,res.stdout)[0].split()[1]
 
 
+ try:
+  import detectron2
+  from detectron2.utils.logger import setup_logger
+  setup_logger()
+  import argparse
+  from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, hooks, launch
+  from detectron2 import model_zoo
+  from detectron2.engine import DefaultPredictor
+  from detectron2.config import get_cfg
+  from detectron2.utils.visualizer import Visualizer
+  from detectron2.data import MetadataCatalog, DatasetCatalog
+  from detectron2.utils.visualizer import ColorMode
 
-#  except:
-#   print(f'Please install pytorch version for CUDA version {CUDA_VERSION}. Please install torchvision combatible with the torch version. Also install Detectron2')
-#   sys.exit(1)
+  from detectron2.structures import BoxMode
+  from detectron2.data.datasets import register_coco_instances
+
+
+
+ except:
+  print(f'Please install pytorch version for CUDA version {CUDA_VERSION}. Please install torchvision combatible with the torch version. Also install Detectron2')
+  sys.exit(1)
+  
+get_CUDA()
 #  return CUDA_VERSION
 
 
@@ -144,8 +147,8 @@ class model:
     self._output_dir = ''
     self._lang = ''
   os.environ["TESSDATA_PREFIX"] = str(self._tessdata_dir_config) #'/content/layout-with-ocr/configs/tessdata'
-  
-  
+
+
 
   for idx,l in enumerate(self._languages):
     # if not (l== 'osd'):
@@ -154,8 +157,8 @@ class model:
       print(str(idx)+'. '+l)                             # idx was self.__lcount
 
 # linput=input("Choose the language model for OCR from the above list: ")
-  
-  
+
+
   def _language_models(self):
     '''
     prints all the available language models
@@ -305,7 +308,7 @@ class preprocesing(model):
     print("Selected Model = ",config_filesDict[int(chosenFile)])
 
     print(" ")
-    
+
     config_name = config_filesDict[int(chosenFile)]
     print(config_name.split('_')[0] == 'Sanskrit')
 
@@ -369,7 +372,7 @@ class preprocesing(model):
     outputs = predictor(im)
     #print(outputs["instances"].pred_classes)
     #print(outputs["instances"].pred_boxes)
-    
+
     # Save predictions
 
     dataset_name = 'data'
@@ -412,7 +415,7 @@ class preprocesing(model):
 
     # storing the labels and corresponding bbox coordinates in a json
     layout_info_sort = {k: v for k, v in sorted(layout_info.items(), key=lambda item: item[1]["box"][1], reverse=True)}
-    
+
     with open(f"{output_dir}/layout_data.json", 'w', encoding='utf-8') as f:
       json.dump(layout_info_sort, f, ensure_ascii=False, indent=4)
 
@@ -476,7 +479,7 @@ class hocr(preprocesing):
               x = img_file[:-5]
             else:
               x = img_file[:-4]
-            
+
             output_path = output_dir + '/' + x
             pytesseract.pytesseract.run_tesseract(img_path, output_path, extension="jpg", lang=languages[linput], config="--psm 4 -c tessedit_create_hocr=1")
 
@@ -509,7 +512,7 @@ class hocr(preprocesing):
       hocr_sorted_data = {k: v for k, v in sorted(hocr_data.items(), key=lambda item: item[1]["box"][1], reverse=True)}
       with open(f"{output_dir}/hocr_data.json", 'w', encoding='utf-8') as f:
         json.dump(hocr_sorted_data, f, ensure_ascii=False, indent=4)
-      
+
       print("OCR is complete. Please find the output in the provided output directory.")
 
       f = open(f'{output_dir}/layout.hocr', 'w+')
@@ -538,7 +541,7 @@ class hocr(preprocesing):
       f.close()
 
     print("OCR is complete. Please find the output in the provided output directory.")
-    
+
 
   def hocr_block(self,k, hocr_sorted_data, i):
     carea = f'''   <div class='ocr_carea' id='block_1_{i+1}'>\n'''
@@ -550,7 +553,7 @@ class hocr(preprocesing):
     word_list = []
     for n,w in enumerate(words):
       word_list.append(f'''      <span class='ocrx_word' id='word_1_{n+1}'>{w}</span>\n''')
-    
+
     f = open(f'{output_dir}/layout.hocr', 'a')
     l = [carea, par, line]
     f.writelines(l)
