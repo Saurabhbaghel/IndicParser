@@ -1,7 +1,7 @@
 
 import subprocess
 import sys
-import re
+from re import findall
 
 def get_CUDA():
  command='''if nvcc --version 2&> /dev/null; then
@@ -18,7 +18,7 @@ else
 fi;'''
  res=subprocess.run(args=command,shell=True,universal_newlines=True,capture_output=True)
  pattern = 'release \d+.\d+'
- CUDA_VERSION = re.findall(pattern,res.stdout)[0].split()[1]
+ CUDA_VERSION = findall(pattern,res.stdout)[0].split()[1]
  
  
  try:
