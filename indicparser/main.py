@@ -25,6 +25,22 @@ fi;'''
  
  try:
   import detectron2
+  from detectron2.utils.logger import setup_logger
+  setup_logger()
+  import argparse
+  from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, hooks, launch
+  from detectron2 import model_zoo
+  from detectron2.engine import DefaultPredictor
+  from detectron2.config import get_cfg
+  from detectron2.utils.visualizer import Visualizer
+  from detectron2.data import MetadataCatalog, DatasetCatalog
+  from detectron2.utils.visualizer import ColorMode
+
+  from detectron2.structures import BoxMode
+  from detectron2.data.datasets import register_coco_instances
+
+
+
  except:
   print(f'Please install pytorch version for CUDA version {CUDA_VERSION}. Please install torchvision combatible with the torch version. Also install Detectron2')
   sys.exit(1)
@@ -71,11 +87,11 @@ from PIL import ImageFont, ImageDraw
 from glob import glob
 from matplotlib import pyplot as plt
 
-import detectron2
-from detectron2.utils.logger import setup_logger
-setup_logger()
+# import detectron2
+# from detectron2.utils.logger import setup_logger
+# setup_logger()
 import argparse
-from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, hooks, launch
+# from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, hooks, launch
 
 # Import some common libraries
 
@@ -84,16 +100,16 @@ import random
 
 # Import some common detectron2 utilities
 
-from detectron2 import model_zoo
-from detectron2.engine import DefaultPredictor
-from detectron2.config import get_cfg
-from detectron2.utils.visualizer import Visualizer
-from detectron2.data import MetadataCatalog, DatasetCatalog
-from detectron2.utils.visualizer import ColorMode
+# from detectron2 import model_zoo
+# from detectron2.engine import DefaultPredictor
+# from detectron2.config import get_cfg
+# from detectron2.utils.visualizer import Visualizer
+# from detectron2.data import MetadataCatalog, DatasetCatalog
+# from detectron2.utils.visualizer import ColorMode
 
-from detectron2.structures import BoxMode
+# from detectron2.structures import BoxMode
 import yaml
-from detectron2.data.datasets import register_coco_instances
+# from detectron2.data.datasets import register_coco_instances
 
 
 
