@@ -1,9 +1,48 @@
+import subprocess
 import sys
-try:
- import detectron2
-except:
- print('Please install detectron2, pytorch and torchvision')
- sys.exit(1)
+
+def get_CUDA():
+ command='''if nvcc --version 2&> /dev/null; then
+    # Determine CUDA version using default nvcc binary
+    CUDA_VERSION=$(nvcc --version | sed -n 's/^.*release \([0-9]\+\.[0-9]\+\).*$/\1/p');
+
+elif /usr/local/cuda/bin/nvcc --version 2&> /dev/null; then
+    # Determine CUDA version using /usr/local/cuda/bin/nvcc binary
+    CUDA_VERSION=$(/usr/local/cuda/bin/nvcc --version | sed -n 's/^.*release \([0-9]\+\.[0-9]\+\).*$/\1/p');
+
+elif [ -f "/usr/local/cuda/version.txt" ]; then
+    # Determine CUDA version using /usr/local/cuda/version.txt file
+    CUDA_VERSION=$(cat /usr/local/cuda/version.txt | sed 's/.* \([0-9]\+\.[0-9]\+\).*/\1/');
+
+else
+    CUDA_VERSION="";
+
+fi;'''
+ res=subprocess.run(args=command,shell=True,universal_newlines=True,capture_output=True)
+ pattern = 'release \d+.\d+'
+ CUDA_VERSION = re.findall(pattern,res.stdout)[0].split()[1]
+ 
+ 
+ try:
+  import detectron2
+ except:
+  print(f'Please install pytorch version for CUDA version {CUDA_VERSION}. Please install torchvision combatible with the torch version. Also install Detectron2')
+  sys.exit(1)
+#  return CUDA_VERSION
+
+
+# import sys
+# try:
+#  import detectron2
+# except:
+#  print('Please install detectron2, pytorch and torchvision')
+#  print(''' 
+#  Please install the Torch combatible with  
+#  Please install a combatible version of detectron2 from the collection of releases below.\n
+#  https://github.com/facebookresearch/detectron2/releases,\n\n
+
+#  ''')
+#  sys.exit(1)
 
 import layoutparser as lp
 import pandas as pd
