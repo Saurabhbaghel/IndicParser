@@ -144,7 +144,24 @@ class model:
 
 # linput=input("Choose the language model for OCR from the above list: ")
 
-
+  def use_doctr(self,doc,pretrained = True):
+    """
+    :param doc (str): the path of the file, can be and image or pdf
+    :param pretrained (bool): whether to use pretrained doctr models or not
+    :return : json annotations
+    """
+    os.environ['USE_TORCH'] = '1'
+    if doc.endswith('pdf'):
+      DOC = DocumentFile.from_pdf(doc)
+    elif doc.endswith(['jpg','jpeg','png']):
+      DOC = DocumentFile.from_images(doc)
+    else:
+      raise TypeError('The format of the document is not supported. Make sure it is pdf or jpg/jpeg/png.')
+    predictor = ocr_predictor(pretrained = pretrained)
+    res = predictor(DOC)
+    return res.export()
+  
+  
   def _language_models(self):
     '''
     prints all the available language models
@@ -201,7 +218,7 @@ class model:
       }
 
 
-class preprocesing(model):
+class postprocesing(model):
   def __init__(self):
     self.__filename = ''
     self.__image_width = 0
@@ -218,10 +235,11 @@ class preprocesing(model):
     self.__filename = os.path.basename(filepath)
     return f'http://localhost:8081/{self.__filename}'
 
-  def convert_to_ls(self,image, tesseract_output, per_level='block_num'):
+  def convert_to_ls(self,image, model_output,model = 0, per_level='block_num'):
     """
     :param image: PIL image object
-    :param tesseract_output: the output from tesseract
+    :param model_output: the output from tesseract or doctr. If the output is from doctr it is a json annotation, otherwise it is a tesseract generated dictionary
+    :param model = 0 or 1. 0 for tesseract output, 1 for doctr
     :param per_level: control the granularity of bboxes from tesseract
     :return: tasks.json ready to be imported into Label Studio with "Optical Character Recognition" template
     """
@@ -229,39 +247,75 @@ class preprocesing(model):
     per_level_idx = super()._get_LEVELS(per_level)         # getting a LEVEL from super class model
     results = []
     all_scores = []
-    for i, level_idx in enumerate(tesseract_output['level']):
-      if level_idx == per_level_idx:
-        bbox = {
-          'x': 100 * tesseract_output['left'][i] / self.__image_width,
-          'y': 100 * tesseract_output['top'][i] / self.__image_height,
-          'width': 100 * tesseract_output['width'][i] / self.__image_width,
-          'height': 100 * tesseract_output['height'][i] / self.__image_height,
-          'rotation': 0
-        }
+    if model = 0:
+      for i, level_idx in enumerate(tesseract_output['level']):
+        if level_idx == per_level_idx:
+          bbox = {
+            'x': 100 * tesseract_output['left'][i] / self.__image_width,
+            'y': 100 * tesseract_output['top'][i] / self.__image_height,
+            'width': 100 * tesseract_output['width'][i] / self.__image_width,
+            'height': 100 * tesseract_output['height'][i] / self.__image_height,
+            'rotation': 0
+          }
 
-        words, confidences = [], []
-        for j, curr_id in enumerate(tesseract_output[per_level]):
-          if curr_id != tesseract_output[per_level][i]:
+          words, confidences = [], []
+          for j, curr_id in enumerate(tesseract_output[per_level]):
+            if curr_id != tesseract_output[per_level][i]:
+              continue
+            word = tesseract_output['text'][j]
+            confidence = tesseract_output['conf'][j]
+            words.append(word)
+            if confidence != '-1':
+              confidences.append(float(confidence / 100.))
+
+
+          text = ' '.join((str(v) for v in words)).strip()
+          if not text:
             continue
-          word = tesseract_output['text'][j]
-          confidence = tesseract_output['conf'][j]
-          words.append(word)
-          if confidence != '-1':
-            confidences.append(float(confidence / 100.))
+          region_id = str(uuid4())[:10]
+          score = sum(confidences) / len(confidences) if confidences else 0
+          bbox_result = {
+            'id': region_id, 'from_name': 'bbox', 'to_name': 'image', 'type': 'rectangle',
+            'value': bbox}
+          transcription_result = {
+            'id': region_id, 'from_name': 'transcription', 'to_name': 'image', 'type': 'textarea',
+            'value': dict(text=[text], **bbox), 'score': score}
+          results.extend([bbox_result, transcription_result])
+          all_scores.append(score)
 
-        text = ' '.join((str(v) for v in words)).strip()
-        if not text:
-          continue
-        region_id = str(uuid4())[:10]
-        score = sum(confidences) / len(confidences) if confidences else 0
-        bbox_result = {
-          'id': region_id, 'from_name': 'bbox', 'to_name': 'image', 'type': 'rectangle',
-          'value': bbox}
-        transcription_result = {
-          'id': region_id, 'from_name': 'transcription', 'to_name': 'image', 'type': 'textarea',
-          'value': dict(text=[text], **bbox), 'score': score}
-        results.extend([bbox_result, transcription_result])
-        all_scores.append(score)
+    else:
+      for block in model_output['pages'][0]['blocks']:
+        for line in block['lines']:
+          words = []
+          confidences = []
+          for word in line['words']:
+
+            words.append(word['value'])
+            confidences.append(word['confidence'])
+            width = word['geometry'][1][0] - word['geometry'][0][0]
+            height = word['geometry'][1][1] - word['geometry'][0][1]
+            bbox = {
+                'x': 100 * word['geometry'][0][0]/img_width,
+                'y': 100 * word['geometry'][0][1]/img_height,
+                'width': 100 * width/img_width,
+                'height': 100 * height/img_height,
+                'rotation': 0
+            }
+          text = ' '.join(str(v) for v in words).strip()
+          if not text:
+            continue
+          region_id = str(uuid4())[:10]
+          score = sum(confidences) / len(confidences) if confidences else 0
+          bbox_result = {
+              'id': region_id, 'from_name': 'bbox', 'to_name': 'image', 
+              'type': 'rectangle', 'value': bbox
+          }  
+          transcription_result = {
+              'id': region_id, 'from_name': 'transcription', 'to_name': 'image',
+               'type': 'textarea','value': dict(text=[text], **bbox), 'score': score
+          }
+          results.extend([bbox_result, transcription_result])
+          all_scores.append(score)
 
     return {
       'data': {
