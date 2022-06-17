@@ -50,6 +50,8 @@ get_CUDA()
 #  sys.exit(1)
 
 import layoutparser as lp
+from doctr.io.DocumentFile import from_pdf, from_images
+from doctr.models.zoo import ocr_predictor
 import pandas as pd
 import numpy as np
 import cv2
