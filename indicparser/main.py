@@ -154,9 +154,9 @@ class model:
     """
     os.environ['USE_TORCH'] = '1'
     if doc.endswith('pdf'):
-      DOC = DocumentFile.from_pdf(doc)
+      DOC = from_pdf(doc)
     elif doc.endswith(['jpg','jpeg','png']):
-      DOC = DocumentFile.from_images(doc)
+      DOC = from_images(doc)
     else:
       raise TypeError('The format of the document is not supported. Make sure it is pdf or jpg/jpeg/png.')
     predictor = ocr_predictor(pretrained = pretrained)
