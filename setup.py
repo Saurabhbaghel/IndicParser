@@ -16,6 +16,7 @@ setup(
 	},
 	
 	install_requires = [
+		'doctr',
 		'numpy',
 		'opencv-python',
 # 		'torch==1.5', 
