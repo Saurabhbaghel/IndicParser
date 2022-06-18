@@ -6,6 +6,10 @@ from doctr.models.zoo import ocr_predictor
 
 class doctr:
   def __init__(file : str,pretrained = True):
+    """
+    Currently it proceses just a single image. 
+    """
+    
     self.path = file
     self.pretrained = pretrained
     
@@ -27,6 +31,7 @@ class doctr:
     
     ###################### C O N V E R T    T O   L A B E L  S T U D I O    F O R M A T     B L O C K ########################### 
    
+    image_width, image_height = DOC[0].shape[1], DOC[0].shape[0]
     filename = os.path.basename(self.path)
     URL = f'http://localhost:8081/{filename}'
     
