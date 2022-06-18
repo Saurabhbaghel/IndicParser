@@ -1,6 +1,6 @@
 import os
 from uuid import uuid4
-from doctr.io.DocumentFile import from_pdf, from_images
+from doctr.io import DocumentFile
 from doctr.models.zoo import ocr_predictor
 
 
@@ -17,9 +17,9 @@ class doctr:
     ###################### O C R     B L O C K ##########################
     os.environ['USE_TORCH'] = '1'
     if self.path.endswith('pdf'):
-      DOC = from_pdf(self.path)
+      DOC = DocumentFile.from_pdf(self.path)
     elif self.path.endswith(['jpg','jpeg','png']):
-      DOC = from_images(self.path)
+      DOC = DocumentFile.from_images(self.path)
     else:
       raise TypeError('The format of the document is not supported. Make sure it is pdf or jpg/jpeg/png.')
     predictor = ocr_predictor(pretrained = self.pretrained)
