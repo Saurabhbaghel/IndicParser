@@ -5,7 +5,7 @@ from doctr.models.zoo import ocr_predictor
 
 
 class doctr:
-  def __init__(file : str,pretrained = True):
+  def __init__(self,file : str,pretrained = True):
     """
     Currently it proceses just a single image. 
     """
@@ -27,8 +27,8 @@ class doctr:
     else:
       raise TypeError('The format of the document is not supported. Make sure it is pdf or jpg/jpeg/png.')
     predictor = ocr_predictor(pretrained = self.pretrained)
-    model_output = predictor(DOC)
-    
+    output = predictor(DOC)
+    model_output = output.export()
     ###################### C O N V E R T    T O   L A B E L  S T U D I O    F O R M A T     B L O C K ########################### 
    
     image_width, image_height = DOC[0].shape[1], DOC[0].shape[0]
