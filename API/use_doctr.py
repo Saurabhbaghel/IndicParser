@@ -1,8 +1,17 @@
 import os
 from uuid import uuid4
-from doctr.io import DocumentFile
-from doctr.models.zoo import ocr_predictor
-from fastapi import FastAPI ,UploadFile
+import dependency
+try:
+    from doctr.io import DocumentFile
+    from doctr.models.zoo import ocr_predictor
+except:
+    print('DocTR not found. Installing. ')
+    dependency.install_doctr()
+try:
+    from fastapi import FastAPI ,UploadFile
+except:
+    print('FastAPI not found. Installing')
+    dependency.install_fastapi()
 
 app = FastAPI()
 
